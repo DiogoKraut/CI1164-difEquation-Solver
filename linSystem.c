@@ -1,8 +1,23 @@
+/*! \file linSystem.c
+    \brief Implementation of linear equation system related functions
+
+    Uses the Gauss-Seidel method for solving systems of linear equations.
+    Generates gnuplot compatible output with average iteration time and the norm of the residue.
+*/
+
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "linSystem.h"
 
+/*!
+  \brief Implementation of the Gauss-Seidel method
+
+  \param S structure that stores a linear system of equations
+  \param x solution array (contains initial guess on function call)
+  \param error threshold for acceptable answer
+  \return 0 if method converged, 1 otherwise
+*/
 int gaussSeidel(linSystem_t *S, real_t *x, real_t error) {
     int k, i, j, end;
     real_t sum;
