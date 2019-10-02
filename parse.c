@@ -1,25 +1,29 @@
+/*! \file parse.c
+    \brief Implementation of argument parsing functions
+*/
 #include <string.h>
 #include <getopt.h>
 #include "linSystem.h"
 #include "parse.h"
 
-struct option longopts[] = {
+/*! Structure holds long (>1 char) argument options */
+const struct option longopts[] = {
     {"nx", required_argument, 0, 'x'},
     {"ny", required_argument, 0, 'y'}
 };
 
 /*!
-  /brief Function parses arguments given to main
+  \brief Function parses arguments given to main
 
-  /param argc from Main
-  /param argv from Main
-  /param o structure to that holds the indo passed as arguments to main
+  \param argc from Main
+  \param argv from Main
+  \param[out] o structure to that holds the info passed as arguments to main
+  \return 0 if parsing was sucessful, 1 otherwise
 */
 int parseMain(int argc, char *const argv[], OPT_ARGS_t *o) {
 	opterr = 0;
 	int c, index = 0;
 
-	// Tratamento das opcoes de entrada
 	while((c = getopt_long_only(argc, argv, "i:o:x:y:", longopts, &index)) != -1) {
 		switch(c) {
 			case 'i':
@@ -48,9 +52,9 @@ int parseMain(int argc, char *const argv[], OPT_ARGS_t *o) {
 }
 
 /*!
-  /brief Initializes the options struture with default values
+  \brief Initializes the options struture with default values
 
-  /param opt structure to that holds the indo passed as arguments to main
+  \param opt structure to that holds the indo passed as arguments to main
 */
 void initOPTS(OPT_ARGS_t *opt) {
 	strcpy(opt->OUTPUT_FILE, "");

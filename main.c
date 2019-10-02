@@ -8,6 +8,11 @@ int main(int argc, char *const argv[]) {
     initOPTS(&opt);
 
     parseMain(argc, argv, &opt);
-    printf("NX:%d \nNT:%d\nMI:%d\n", opt.NX, opt.NY, opt.MAXITER);
+    printf("NX:%d \nNY:%d\nMI:%d\n", opt.NX, opt.NY, opt.MAXITER);
+
+    linSystem_t *S = malloc(sizeof(linSystem_t));
+    difEquation(S, opt.NX, opt.NY);
+    real_t *x = calloc(S->n, sizeof(real_t));
+    gaussSeidel(S, x, 0.000001);
     return 0;
 }
