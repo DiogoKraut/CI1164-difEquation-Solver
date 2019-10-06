@@ -5,9 +5,7 @@
 
 #define MAX_FILE 15
 
-/*!
-    \brief Struture for handling arguments
-*/
+/*! Struture for handling arguments */
 typedef struct {
 	char 	  OUTPUT_FILE[MAX_FILE]; /*!< Specified output file. Stdout if empty    */
 	int       NX;                    /*!< Number of subdivisions in the X dimension */

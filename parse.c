@@ -34,9 +34,13 @@ int parseMain(int argc, char *const argv[], OPT_ARGS_t *o) {
 				break;
             case 'x':
                 o->NX = atoi(optarg);
+                if(o->NX < 0)
+                    return 2;
                 break;
             case 'y':
                 o->NY = atoi(optarg);
+                if(o->NY < 0)
+                    return 2;
                 break;
 			case '?':
 				if (optopt == 'i' || optopt == 'o' || strcmp(optarg, "nx") == 0 || strcmp(optarg, "ny") == 0)
