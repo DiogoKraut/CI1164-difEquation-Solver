@@ -27,31 +27,29 @@ int difEquation(linSystem_t *S, int nx, int ny) {
     hy = M_PI / (ny + 1);
 
     /* For simplification */
-    real_t shx = powf(hx, 2.0);
-    real_t chx = powf(hx, 3.0);
-    real_t shy = powf(hy, 2.0);
-    real_t chy = powf(hy, 3.0);
+    real_t shx = hx*hx;
+    real_t shy = hy*hy;;
 
     /* Calculate diagonal constants */
     // Main diagonal
     real_t md;
-    md = 8*(hx*chy + chx*hy + 2*chx*chy*powf(M_PI, 2.0));
+    md = 4*shx + 4*shy + 8*shx*shy*M_PI*M_PI;
 
     // Superior diagonal
     real_t sd;
-    sd = 2*(shx*chy - 2*hx*chy);
+    sd = hx*shy - 2*shy;
 
     // Inferior diagonal
     real_t id;
-    id = 2*(-2*hx*chy - shx*chy);
+    id = -hx*shy - 2*shy;
 
     // Removed superior diagonal
     real_t rsd;
-    rsd = 2*(chx*shy - 2*chx*hy);
+    rsd = -2*shx + shx*hy;
 
     // Removed inferior diagonal
     real_t rid;
-    rid = 2*(-2*chx*hy - chx*shy);
+    rid = -2shx - shx*hy;
 
     /* Fill main diagonal */
     for(i = 0; i < num_pts; i++)
@@ -79,7 +77,7 @@ int difEquation(linSystem_t *S, int nx, int ny) {
         for(i = 0; i < nx; i++) {
             x = i*hx;
             y = j*hy;
-            S->b[k] = 16*powf(M_PI, 2.0)*chx*chy*( sin(2*M_PI*x)*sinh(M_PI*y) + sin(2*M_PI*(M_PI-x))*sinh(M_PI*(M_PI-y)) );
+            S->b[k] = 8*M_PI*M_PI*shx*shy*(sin(2*M_PI*x)*sinh(M_PI*y) + sin(2*M_PI*(M_PI-x))*sinh(M_PI*(M_PI-y)) );
 
             /* Border conditions */
             if(i == 0 && k >= 1)
