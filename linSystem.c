@@ -21,19 +21,17 @@
   \param[out] int_count counter of the number of iterations
   \return 0 if method converged, 1 otherwise
 */
-int gaussSeidel(linSystem_t *S, real_t *x, real_t error, double *avg_time, real_t *norm, int *int_count) {
+int gaussSeidel(linSystem_t *S, real_t *x, real_t error, double *avg_time, real_t *norm) {
     int k, i, j;
-    int end; // Flag indicates when error is within acceptable range
     double t1;
-    real_t sum, diff, res;
+    real_t sum, diff;
 
     *avg_time = 0.0;
     real_t *c = calloc(S->n, sizeof(real_t));
 
-    for (k = 0, end = 1; k < MAXIT && end == 1; k++) {
+    for (k = 0, end = 1; k < MAXIT; k++) {
         t1 = timestamp();
         end = 0;
-        res = 0.0;
         for(i = 0; i < S->n; i++) {
             c[i] = S->b[i];
             sum = 0.0;
@@ -45,29 +43,32 @@ int gaussSeidel(linSystem_t *S, real_t *x, real_t error, double *avg_time, real_
             }
             c[i] -= sum;
             c[i] /= S->A[i][i];
-
-            diff = fabsf(c[i] - x[i]);
-            if(diff > res)
-                res = diff;
-            /* Check stop condition */
-            if(fabsf(c[i] - x[i]) > error)
-                end = 1;
         }
-        if(end == 1)
-            for(i = 0; i < S->n; i++)
-                x[i] = c[i];               // update solution array
         *avg_time += timestamp() - t1;
-        norm[k] = res;
+        norm[k] = normL2(S, x);
     }
+    x[i] = c[i]; // update solution array
     *int_count = k;
-    t1 = t1 / k;
+    *avg_time / MAXIT;
     free(c);
-    // printf("%d\n", k);
-    // printf("Solution:\n");
-    // for(i = 0; i < S->n; i++){
-    //     printf("x%d: %4.2f  ", i, x[i]);
-    // }
-    if(k >= MAXIT)
-        return 1;
-    return 0;
+}
+
+/*!
+    \brief Calculates the L2 norm
+    \param S structure that stores a linear system of equations
+    \param x solution array (contains initial guess on function call)
+*/
+
+real_t normL2(linSystem_t *S, real_t *x) {
+    int i, j;
+    real_t norm, res;
+    // Calculate residue array
+    for(i = 0; i < S->n; i++) {
+        res = 0.0;
+        for(j = 0; j < S->n; j++) {
+            res -= S->b[i] -(S->A[i][j] * x[i]);
+        }
+        norm += res*res; 
+    }
+    return (real_t)sqrtf(norm);
 }
