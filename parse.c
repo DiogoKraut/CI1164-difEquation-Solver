@@ -3,6 +3,7 @@
 */
 #include <string.h>
 #include <getopt.h>
+#include <likwid.h>
 #include "linSystem.h"
 #include "parse.h"
 

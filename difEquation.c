@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+#include <likwid.h>
 #include "difEquation.h"
 #include "linSystem.h"
 

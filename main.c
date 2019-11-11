@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <likwid.h>
 #include "gnuprint.h"
 #include "linSystem.h"
 #include "difEquation.h"

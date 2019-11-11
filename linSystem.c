@@ -7,6 +7,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <likwid.h>
 #include "linSystem.h"
 #include "utils.h"
 
@@ -22,36 +23,34 @@
   \return 0 if method converged, 1 otherwise
 */
 int gaussSeidel(linSystem_t *S, real_t *x, double *avg_time, real_t *norm) {
-    int k, i, j;
-    double t1;
-    real_t sum;
+	LIKWID_MARKER_INIT;
+	LIKWID_MARKER_START("GS");
+  int k, i, j;
+  double t1;
+  real_t sum;
 
-    *avg_time = 0.0;
-    real_t *c = calloc(S->n, sizeof(real_t));
+  *avg_time = 0.0;
 
-    for (k = 0; k < MAXIT; k++) {
-        t1 = timestamp();
-        for(i = 0; i < S->n; i++) {
-            c[i] = S->b[i];
-            sum = 0.0;
-            for(j = 0; j < S->n; j++) {
-                if(j < i)
-                    sum += S->A[i][j] * c[j]; // use previously calculated value
-                else if(j > i)
-                    sum += S->A[i][j] * x[j]; // use current value
-            }
-            c[i] -= sum;
-            c[i] /= S->A[i][i];
-        }
-        for(i = 0; i < S->n; i++)
-                x[i] = c[i];               // update solution array
-
-        norm[k] = normL2(S, x);
-        *avg_time += timestamp() - t1;
+  for (k = 0; k < MAXIT; k++) {
+    t1 = timestamp();
+    for(i = 0; i < S->n; i++) {
+      sum = 0.0;
+      for(j = 0; j < S->n; j++) {
+        if(j != i)
+          sum += S->A[i][j] * x[j];
+      }
+      x[i] = S->b[i] - sum;
+      x[i] /= S->A[i][i];
     }
-    *avg_time = *avg_time / MAXIT;
-    free(c);
-    return 0;
+
+    *avg_time += timestamp() - t1;
+    norm[k] = normL2(S, x);
+  }
+  *avg_time = *avg_time / MAXIT;
+
+	LIKWID_MARKER_STOP("GS");
+	LIKWID_MARKER_CLOSE;
+  return 0;
 }
 
 /*!
