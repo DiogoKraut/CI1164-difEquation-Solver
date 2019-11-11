@@ -32,10 +32,7 @@ int main(int argc, char *const argv[]) {
 
     difEquation(S, opt.NX, opt.NY);
 
-    if(gaussSeidel(S, x, &avg_time, norm) == 1) {
-        fprintf(stderr, "Method didnt converge\n");
-        return 1;
-    }
+    gaussSeidel(S, x, &avg_time, norm);
     gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
 
 

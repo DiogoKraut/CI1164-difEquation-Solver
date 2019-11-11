@@ -29,7 +29,6 @@ int gaussSeidel(linSystem_t *S, real_t *x, double *avg_time, real_t *norm) {
     *avg_time = 0.0;
     real_t *c = calloc(S->n, sizeof(real_t));
 
-
     for (k = 0; k < MAXIT; k++) {
         t1 = timestamp();
         for(i = 0; i < S->n; i++) {
@@ -44,11 +43,11 @@ int gaussSeidel(linSystem_t *S, real_t *x, double *avg_time, real_t *norm) {
             c[i] -= sum;
             c[i] /= S->A[i][i];
         }
-        *avg_time += timestamp() - t1;
         for(i = 0; i < S->n; i++)
                 x[i] = c[i];               // update solution array
 
         norm[k] = normL2(S, x);
+        *avg_time += timestamp() - t1;
     }
     *avg_time = *avg_time / MAXIT;
     free(c);
