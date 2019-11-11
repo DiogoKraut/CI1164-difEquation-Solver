@@ -1,7 +1,7 @@
 TARGET = pdeSolver
 LIBS = -lm
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -g
 
 .PHONY: default all clean
 

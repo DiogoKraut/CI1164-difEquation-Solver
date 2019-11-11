@@ -23,8 +23,8 @@ int difEquation(linSystem_t *S, int nx, int ny) {
     real_t num_pts = nx*ny; // Number of points in the mesh
 
     /* Find step sizes hx and hy */
-    hx = M_PI / (nx + 1);
-    hy = M_PI / (ny + 1);
+    hx = M_PI / (nx - 1);
+    hy = M_PI / (ny - 1);
 
     /* For simplification */
     real_t shx = hx*hx;
@@ -49,7 +49,7 @@ int difEquation(linSystem_t *S, int nx, int ny) {
 
     // Removed inferior diagonal
     real_t rid;
-    rid = -2shx - shx*hy;
+    rid = -2*shx - shx*hy;
 
     /* Fill main diagonal */
     for(i = 0; i < num_pts; i++)

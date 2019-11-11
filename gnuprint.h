@@ -4,6 +4,6 @@
 #include <stdio.h>
 #include "linSystem.h"
 
-int gnuplot(real_t *sol, unsigned int n, double avg_time, real_t *norm, int int_count, FILE *fp);
+int gnuplot(real_t *sol, int nx, int ny, double avg_time, real_t *norm, FILE *fp);
 
 #endif

@@ -1,7 +1,7 @@
 #ifndef __linSystem_H__
 #define __linSystem_H__
 
-#define MAXIT 100
+#define MAXIT 10
 #define EPS 1.0e-4
 
 #include <stdio.h>
@@ -15,6 +15,6 @@ typedef struct {
     unsigned int n; /*!< dimension of the system                    */
 } linSystem_t;
 
-int gaussSeidel(linSystem_t *S, real_t *x, real_t error, double *avg_time, real_t *norm, int *int_count);
-
+int gaussSeidel(linSystem_t *S, real_t *x, double *avg_time, real_t *norm);
+real_t normL2(linSystem_t *S, real_t *x);
 #endif

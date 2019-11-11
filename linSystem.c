@@ -21,17 +21,17 @@
   \param[out] int_count counter of the number of iterations
   \return 0 if method converged, 1 otherwise
 */
-int gaussSeidel(linSystem_t *S, real_t *x, real_t error, double *avg_time, real_t *norm) {
+int gaussSeidel(linSystem_t *S, real_t *x, double *avg_time, real_t *norm) {
     int k, i, j;
     double t1;
-    real_t sum, diff;
+    real_t sum;
 
     *avg_time = 0.0;
     real_t *c = calloc(S->n, sizeof(real_t));
 
-    for (k = 0, end = 1; k < MAXIT; k++) {
+
+    for (k = 0; k < MAXIT; k++) {
         t1 = timestamp();
-        end = 0;
         for(i = 0; i < S->n; i++) {
             c[i] = S->b[i];
             sum = 0.0;
@@ -45,30 +45,34 @@ int gaussSeidel(linSystem_t *S, real_t *x, real_t error, double *avg_time, real_
             c[i] /= S->A[i][i];
         }
         *avg_time += timestamp() - t1;
+        for(i = 0; i < S->n; i++)
+                x[i] = c[i];               // update solution array
+
         norm[k] = normL2(S, x);
     }
-    x[i] = c[i]; // update solution array
-    *int_count = k;
-    *avg_time / MAXIT;
+    *avg_time = *avg_time / MAXIT;
     free(c);
+    return 0;
 }
 
 /*!
-    \brief Calculates the L2 norm
+    \brief Calculates the norm of the array r = S->b - S->A*x
     \param S structure that stores a linear system of equations
-    \param x solution array (contains initial guess on function call)
+    \param x solution array
 */
 
 real_t normL2(linSystem_t *S, real_t *x) {
     int i, j;
     real_t norm, res;
+    norm = 0.0;
     // Calculate residue array
     for(i = 0; i < S->n; i++) {
         res = 0.0;
-        for(j = 0; j < S->n; j++) {
-            res -= S->b[i] -(S->A[i][j] * x[i]);
+        for(j = 0; j < S->n; j++) {     // ith line of matrix A times x
+            res += (S->A[i][j] * x[j]);
         }
-        norm += res*res; 
+        res = S->b[i] - res;            // partial residue
+        norm += res*res;                // sum of all partial residues
     }
-    return (real_t)sqrtf(norm);
+    return (real_t)sqrtf(norm);         // returns norm of residue array
 }

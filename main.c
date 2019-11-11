@@ -7,7 +7,7 @@
 int main(int argc, char *const argv[]) {
     OPT_ARGS_t opt;
     double avg_time;
-    int int_count, i;
+    int i;
 
     initOPTS(&opt);
 
@@ -32,12 +32,12 @@ int main(int argc, char *const argv[]) {
 
     difEquation(S, opt.NX, opt.NY);
 
-    if(gaussSeidel(S, x, 0.000001, &avg_time, norm, &int_count) == 1) {
+    if(gaussSeidel(S, x, &avg_time, norm) == 1) {
         fprintf(stderr, "Method didnt converge\n");
         return 1;
     }
+    gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
 
-    gnuplot(x, S->n, avg_time, norm, int_count, fp);
 
     /* Free */
     for(i = 0; i < opt.NX*opt.NY; i++)
