@@ -30,15 +30,18 @@
     for (k = 0; k < MAXIT; k++) {
   	LIKWID_MARKER_START("GS");
         t1 = timestamp();
-        /* First nx iteractions */
-        sum = 0.0;
-        x[0] = S->md;
+        /* First iteraction */
+        x[0] = ((S->sd[0] * x[1]) + (S->rsd[0] * x[nx])) / S->md[0];
+        /* Next nx iteraction */
         for(i = 1; i < nx; i++) {
-
+        	x[i] = ((S->id[i] * x[i-1]) + (S->sd[i] * x[i]) + S->rsd[nx-1]) / S->md[i];
         }
-        for(i = 0; i < S->n; i++) {
-            sum  = 0.0;
-            sum += S->rid[i] * x[i - nx]
+        /* From nx to S->n - nx */
+        for(i = nx; i < S->n - nx; i++) {
+        	x[i] = ((S->rid[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i]) + (S->rsd[nx-1] * x[i+nx])) / S->md[i];
+        }
+        for(i = S->n - nx; i < S->n; i++) {
+        	x[i] = ((S->rid[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i])) / S->md[i];
         }
 
         *avg_time += timestamp() - t1;
