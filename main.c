@@ -13,7 +13,6 @@ int main(int argc, char *const argv[]) {
     initOPTS(&opt);
 
     parseMain(argc, argv, &opt);
-
     /* Memory allocation */
     linSystem_t *S = malloc(sizeof(linSystem_t));
     S->A = malloc(opt.NX*opt.NY*sizeof(real_t*));
@@ -34,7 +33,10 @@ int main(int argc, char *const argv[]) {
     difEquation(S, opt.NX, opt.NY);
 
     gaussSeidel(S, x, &avg_time, norm);
-    gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
+    // for(int i = 0; i < S->n; i++) {
+    //     printf("%lf ", x[i]);
+    // }
+    // gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
 
 
     /* Free */

@@ -1,4 +1,7 @@
 #!/bin/bash
-for i in {32, 50, 64, 100, 128, 200, 256, 300, 400, 512, 1000, 1024, 2000, 2048, 3000, 4000, 4096, 5000, 10000}; do
-    ./pdeSolver -nx $i -ny $i
+rm scripts/time.dat scripts/L2.dat
+for i in {32,50}; do
+    sudo likwid-perfctr -C 2 -g L2CACHE -m ./pdeSolver -nx $i -ny $i > out2.dat
+    cat out2.dat | grep "RDTSC Runtime" | awk '{print $6}' >> scripts/time.dat
+    cat out2.dat | grep "miss ratio"    | awk '{print $6}' >> scripts/L2.dat
 done

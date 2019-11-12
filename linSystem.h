@@ -6,7 +6,7 @@
 
 #include <stdio.h>
 
-typedef float real_t; /*! \type typedef for switching between float/double */
+typedef double real_t; /*! \type typedef for switching between float/double */
 
 /*! Structure for storing a system of linear equations */
 typedef struct {
