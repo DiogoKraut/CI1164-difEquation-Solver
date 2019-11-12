@@ -19,7 +19,7 @@
     \param[out] avg_time average iteration time
     \param[out] norm array conatining the norm for each iteration
   */
-  int gaussSeidel(linSystem_t *S, real_t *x, double *avg_time, real_t *norm) {
+  int gaussSeidel(linSystem_t *S, int nx, real_t *x, double *avg_time, real_t *norm) {
   	LIKWID_MARKER_INIT;
     int k, i, j;
     double t1;
@@ -30,14 +30,15 @@
     for (k = 0; k < MAXIT; k++) {
   	LIKWID_MARKER_START("GS");
         t1 = timestamp();
+        /* First nx iteractions */
+        sum = 0.0;
+        x[0] = S->md;
+        for(i = 1; i < nx; i++) {
+
+        }
         for(i = 0; i < S->n; i++) {
-            sum = 0.0;
-            for(j = 0; j < S->n; j++) {
-                if(j != i)
-                    sum += S->A[i][j] * x[j];
-            }
-            x[i] = S->b[i] - sum;
-            x[i] /= S->A[i][i];
+            sum  = 0.0;
+            sum += S->rid[i] * x[i - nx]
         }
 
         *avg_time += timestamp() - t1;

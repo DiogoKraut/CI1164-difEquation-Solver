@@ -6,13 +6,13 @@
 
 #include <stdio.h>
 
-typedef double real_t; /*! \type typedef for switching between float/double */
+typedef double real_t;
 
 /*! Structure for storing a system of linear equations */
 typedef struct {
-  real_t **A;     /*!< linear equation system's coeficient matrix */
-  real_t *b;      /*!< linear equation system's right-hand array  */
-  unsigned int n; /*!< dimension of the system                    */
+  real_t *md, *sd, *id, *rid, *rsd; /*!< linear equation system's diagonals        */
+  real_t *b;                        /*!< linear equation system's right-hand array */
+  unsigned int n;                   /*!< dimension of the system                   */
 } linSystem_t;
 
 int gaussSeidel(linSystem_t *S, real_t *x, double *avg_time, real_t *norm);

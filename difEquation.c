@@ -21,7 +21,6 @@
 int difEquation(linSystem_t *S, int nx, int ny) {
     int i, j;
     real_t hx, hy, x, y;
-    real_t num_pts = nx*ny; // Number of points in the mesh
 
     /* Find step sizes hx and hy */
     hx = M_PI / (nx - 1);
@@ -31,46 +30,32 @@ int difEquation(linSystem_t *S, int nx, int ny) {
     real_t shx = hx*hx;
     real_t shy = hy*hy;;
 
-    /* Calculate diagonal constants */
-    // Main diagonal
-    real_t md;
+    /* Fill diagonals */
+
+    real_t md;   // main
     md = 4*shx + 4*shy + 8*shx*shy*M_PI*M_PI;
+    for(i = 0; i < S->n; i++)
+        S->md[i] = md;
 
-    // Superior diagonal
-    real_t sd;
+    real_t sd;   // superior
     sd = hx*shy - 2*shy;
+    for(i = 0; i < S->n - 1; i++)
+        S->sd[i] = sd;
 
-    // Inferior diagonal
-    real_t id;
+    real_t id;   // inferior
     id = -hx*shy - 2*shy;
+    for(i = 1; i < S->n; i++)
+        S->id[i] = id;
 
-    // Removed superior diagonal
-    real_t rsd;
+    real_t rsd;  // removed superior
     rsd = -2*shx + shx*hy;
-
-    // Removed inferior diagonal
-    real_t rid;
-    rid = -2*shx - shx*hy;
-
-    /* Fill main diagonal */
-    for(i = 0; i < num_pts; i++)
-        S->A[i][i] = md;
-
-    /* Fill superior diagonal */
-    for(i = 0; i < num_pts - 1; i++)
-        S->A[i][i+1] = sd;
-
-    /* Fill inferior diagonal */
-    for(i = 1; i < num_pts; i++)
-        S->A[i][i-1] = id;
-
-    /* Fill removed superior diagonal */
     for(i = 0; i < (nx*ny)-nx; i++)
-        S->A[i][i+nx] = rsd;
+        S->rsd[i] = rsd;
 
-    /* Fill removed inferior diagonal */
-    for(i = nx; i < num_pts; i++)
-        S->A[i][i-nx] = rid;
+    real_t rid;  // removed inferior
+    rid = -2*shx - shx*hy;
+    for(i = nx; i < S->n; i++)
+        S->rid[i] = rid;
 
     /* Iterate through the mesh */
     int k = 0;
@@ -78,23 +63,24 @@ int difEquation(linSystem_t *S, int nx, int ny) {
         for(i = 0; i < nx; i++) {
             x = i*hx;
             y = j*hy;
+            /* Set b array */
             S->b[k] = 8*M_PI*M_PI*shx*shy*(sin(2*M_PI*x)*sinh(M_PI*y) + sin(2*M_PI*(M_PI-x))*sinh(M_PI*(M_PI-y)) );
 
             /* Border conditions */
             if(i == 0 && k >= 1)
-                S->A[k][k-1]  = 0.0;
+                S->id[k] = 0.0;
 
-            if(i == nx-1 && k < num_pts-1)
-                S->A[k][k+1]  = 0.0;
+            if(i == nx-1 && k < S->n-1)
+                S->sd[k] = 0.0;
 
             if(j == 0 && k >= nx) {
-                S->A[k][k-nx] = 0.0;
-                S->b[k]      -=  sin(2*M_PI*(M_PI-x))*sinh(M_PI*M_PI);
+                S->rid   = 0.0;
+                S->b[k] -= sin(2*M_PI*(M_PI-x))*sinh(M_PI*M_PI);
             }
 
-            if(j == ny-1 && k < num_pts-nx) {
-                S->A[k][k+nx] = 0.0;
-                S->b[k]      -= sin(2*M_PI*x)*sinh(M_PI*M_PI);
+            if(j == ny-1 && k < S->n-nx) {
+                S->rsd   = 0.0;
+                S->b[k] -= sin(2*M_PI*x)*sinh(M_PI*M_PI);
             }
 
             k++;
