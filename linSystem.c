@@ -22,9 +22,8 @@
   int gaussSeidel(linSystem_t *S, int nx, real_t *x, double *avg_time, real_t *norm) {
   	LIKWID_MARKER_INIT;
     real_t res, part_norm;
-    int k, i, j;
+    int k, i;
     double t1;
-    real_t sum;
 
     *avg_time = 0.0;
 
@@ -36,16 +35,16 @@
         res  = ((S->sd[0] * x[1]) + (S->rsd[0] * x[nx]));
         x[0] = (S->b[0] - res) / S->md[0];
         res += S->md[0] * x[0];
-        // printf("0 %.3lf\n", res);
+        // printf(" 0 %.3lf", res);
         res  = S->b[0] - res;
         part_norm += res*res;
 
         /* Next nx iteration */
-        for(i = 1; i < nx-1; i++) {
+        for(i = 1; i < nx; i++) {
         	res  = ((S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]));
             x[i] = (S->b[i] - res) / S->md[i];
             res += S->md[i] * x[i];
-            // printf("%d %.3lf\n",i, res);
+            // printf(" %d %.3lf",i, res);
             res  = S->b[i] - res;
             part_norm += res*res;
         }
@@ -55,17 +54,17 @@
         	res  = ((S->rid[i] * x[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]));
             x[i] = (S->b[i] - res) / S->md[i];
             res += S->md[i] * x[i];
-            // printf("%d %.3lf\n",i, res);
+            // printf(" %d %.3lf",i, res);
             res  = S->b[i] - res;
             part_norm += res*res;
         }
 
-        /* From S->n - nx to S->n - 1 */
-        for(i = S->n - nx; i < S->n-1; i++) {
+        /* From S->n - nx to S->n */
+        for(i = S->n - nx-1; i < S->n-1; i++) {
         	res = ((S->rid[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]));
             x[i] = (S->b[i] - res) / S->md[i];
             res += S->md[i] * x[i];
-            // printf("%d %.3lf\n",i, res);
+            // printf(" %d %.3lf",i, res);
             res  = S->b[i] - res;
             part_norm += res*res;
         }
@@ -74,13 +73,14 @@
         res = ((S->rid[S->n-1] * x[S->n - nx-1]) + (S->id[S->n-1] * x[S->n-1]));
         x[S->n] = (S->b[S->n-1] - res) / S->md[S->n-1];
         res += S->md[S->n-1] * x[S->n-1];
-        // printf("l %.3lf\n", res);
+        // printf(" l %.3lf", res);
         res  = S->b[S->n-1] - res;
         part_norm += res*res;
 
-        for(i = 0; i < S->n; i++)
-            printf("%.3lf ", x[i]);
-        printf("\n");
+        // for(i = 0; i < S->n; i++)
+        //     printf("%.3lf ", x[i]);
+        // printf("%lf ", part_norm);
+        // printf("\n");
 
         norm[k] = sqrt(part_norm);
         *avg_time += timestamp() - t1;

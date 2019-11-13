@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
-#include <likwid.h>
 #include "difEquation.h"
 #include "linSystem.h"
 
@@ -49,7 +48,7 @@ int difEquation(linSystem_t *S, int nx, int ny) {
 
     real_t rsd;  // removed superior
     rsd = -2*shx + shx*hy;
-    for(i = 0; i < (nx*ny)-nx; i++)
+    for(i = 0; i < (nx*ny)-nx-1; i++)
         S->rsd[i] = rsd;
 
     real_t rid;  // removed inferior

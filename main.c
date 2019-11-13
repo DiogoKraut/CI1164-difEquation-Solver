@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <likwid.h>
 #include "gnuprint.h"
 #include "linSystem.h"
 #include "difEquation.h"
@@ -8,7 +7,7 @@
 int main(int argc, char *const argv[]) {
     OPT_ARGS_t opt;
     double avg_time;
-    int i;
+    // int i;
 
     initOPTS(&opt);
 
@@ -40,7 +39,7 @@ int main(int argc, char *const argv[]) {
     // for(int i = 0; i < S->n; i++) {
     //     printf("%lf ", x[i]);
     // }
-    gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
+    // gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
  
 
     /* Free */
@@ -53,8 +52,6 @@ int main(int argc, char *const argv[]) {
     free(S);
     free(x);
     free(norm);
-
-
-
+    
     return 0;
 }
