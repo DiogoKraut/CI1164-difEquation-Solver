@@ -74,12 +74,12 @@ int difEquation(linSystem_t *S, int nx, int ny) {
                 S->sd[k] = 0.0;
 
             if(j == 0 && k >= nx) {
-                S->rid   = 0.0;
+                S->rid[k]= 0.0;
                 S->b[k] -= sin(2*M_PI*(M_PI-x))*sinh(M_PI*M_PI);
             }
 
             if(j == ny-1 && k < S->n-nx) {
-                S->rsd   = 0.0;
+                S->rsd[k]= 0.0;
                 S->b[k] -= sin(2*M_PI*x)*sinh(M_PI*M_PI);
             }
 

@@ -32,15 +32,15 @@ int gnuplot(real_t *sol, int nx, int ny, double avg_time, real_t *norm, FILE *fp
     fprintf(fp, "#################################\n");
 
     /* Print data */
-    // x = y = 0.0;
-    // for(i = 0; i < ny; i++) {
-    //     for(j = 0; j < nx; j ++) {
-    //         fprintf(fp, "%lf %lf %lf\n", x, y, sol[i*nx + j]);
-    //         x += hx;
-    //     }
-    //     x = 0.0;
-    //     y += hy;
-    // }
+    x = y = 0.0;
+    for(i = 0; i < ny; i++) {
+        for(j = 0; j < nx; j ++) {
+            fprintf(fp, "%lf %lf %lf\n", x, y, sol[i*nx + j]);
+            x += hx;
+        }
+        x = 0.0;
+        y += hy;
+    }
     return 0;
 
 }

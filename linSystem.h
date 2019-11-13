@@ -15,6 +15,6 @@ typedef struct {
   unsigned int n;                   /*!< dimension of the system                   */
 } linSystem_t;
 
-int gaussSeidel(linSystem_t *S, real_t *x, double *avg_time, real_t *norm);
+int gaussSeidel(linSystem_t *S, int nx, real_t *x, double *avg_time, real_t *norm);
 real_t normL2(linSystem_t *S, real_t *x);
 #endif

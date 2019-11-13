@@ -36,18 +36,20 @@ int main(int argc, char *const argv[]) {
 
     difEquation(S, opt.NX, opt.NY);
 
-    gaussSeidel(S, x, &avg_time, norm);
+    gaussSeidel(S, opt.NX, x, &avg_time, norm);
     // for(int i = 0; i < S->n; i++) {
     //     printf("%lf ", x[i]);
     // }
-    // gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
-
+    gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
+ 
 
     /* Free */
-    for(i = 0; i < opt.NX*opt.NY; i++)
-        free(S->A[i]);
+    free(S->rid);
+    free(S->id);
+    free(S->md);
+    free(S->sd);
+    free(S->rsd);
     free(S->b);
-    free(S->A);
     free(S);
     free(x);
     free(norm);
