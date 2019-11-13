@@ -28,6 +28,9 @@
     *avg_time = 0.0;
 
     for (k = 0; k < MAXIT; k++) {
+    for(int i = 0; i < S->n; i++) {
+        printf("%lf ", x[i]);
+    }printf("\n");
   	LIKWID_MARKER_START("GS");
         t1 = timestamp();
         for(i = 0; i < S->n; i++) {
