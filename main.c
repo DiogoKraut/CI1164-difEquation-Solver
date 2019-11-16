@@ -6,6 +6,7 @@
 #include "parse.h"
 
 int main(int argc, char *const argv[]) {
+    LIKWID_MARKER_INIT;
     OPT_ARGS_t opt;
     double avg_time;
     int i;
@@ -47,8 +48,7 @@ int main(int argc, char *const argv[]) {
     free(S);
     free(x);
     free(norm);
-
-
+    LIKWID_MARKER_CLOSE;
 
     return 0;
 }
