@@ -71,7 +71,7 @@
 
         /* Last iteration */
         res = ((S->diag[S->n-1].rid * x[S->n - nx-1]) + (S->diag[S->n-1].id * x[S->n-1]));
-        x[S->n] = (S->b[S->n-1] - res) / S->diag[S->n-1].md;
+        x[S->n-1] = (S->b[S->n-1] - res) / S->diag[S->n-1].md;
         res += S->diag[S->n-1].md * x[S->n-1];
         // printf(" l %.3lf", res);
         res  = S->b[S->n-1] - res;
