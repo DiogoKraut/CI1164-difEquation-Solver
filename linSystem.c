@@ -26,6 +26,7 @@
 
     *avg_time = 0.0;
 
+    for (k = 0; k < MAXIT; k++) {
   	LIKWID_MARKER_START("GS");
     for (k = 0; k < MAXIT; k++) {
         t1 = timestamp();
