@@ -41,8 +41,8 @@
 
         *avg_time += timestamp() - t1;
         norm[k] = normL2(S, x);
-    }
 	LIKWID_MARKER_STOP("GS");
+    }
     *avg_time = *avg_time / MAXIT;
 
     return 0;
