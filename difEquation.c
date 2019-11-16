@@ -34,27 +34,27 @@ int difEquation(linSystem_t *S, int nx, int ny) {
     real_t md;   // main
     md = 4*shx + 4*shy + 8*shx*shy*M_PI*M_PI;
     for(i = 0; i < S->n; i++)
-        S->md[i] = md;
+        S->diag[i].md = md;
 
     real_t sd;   // superior
     sd = hx*shy - 2*shy;
     for(i = 0; i < S->n - 1; i++)
-        S->sd[i] = sd;
+        S->diag[i].sd = sd;
 
     real_t id;   // inferior
     id = -hx*shy - 2*shy;
     for(i = 1; i < S->n; i++)
-        S->id[i] = id;
+        S->diag[i].id = id;
 
     real_t rsd;  // removed superior
     rsd = -2*shx + shx*hy;
     for(i = 0; i < (nx*ny)-nx-1; i++)
-        S->rsd[i] = rsd;
+        S->diag[i].rsd = rsd;
 
     real_t rid;  // removed inferior
     rid = -2*shx - shx*hy;
     for(i = nx; i < S->n; i++)
-        S->rid[i] = rid;
+        S->diag[i].rid = rid;
 
     /* Iterate through the mesh */
     int k = 0;
@@ -67,18 +67,18 @@ int difEquation(linSystem_t *S, int nx, int ny) {
 
             /* Border conditions */
             if(i == 0 && k >= 1)
-                S->id[k] = 0.0;
+                S->diag[k].id = 0.0;
 
             if(i == nx-1 && k < S->n-1)
-                S->sd[k] = 0.0;
+                S->diag[k].sd = 0.0;
 
             if(j == 0 && k >= nx) {
-                S->rid[k]= 0.0;
+                S->diag[k].rid = 0.0;
                 S->b[k] -= sin(2*M_PI*(M_PI-x))*sinh(M_PI*M_PI);
             }
 
             if(j == ny-1 && k < S->n-nx) {
-                S->rsd[k]= 0.0;
+                S->diag[k].rsd = 0.0;
                 S->b[k] -= sin(2*M_PI*x)*sinh(M_PI*M_PI);
             }
 

@@ -16,12 +16,8 @@ int main(int argc, char *const argv[]) {
     linSystem_t *S = malloc(sizeof(linSystem_t));
     S->n = opt.NX*opt.NY;
 
-    S->md  = calloc(S->n, sizeof(real_t));
-    S->id  = calloc(S->n, sizeof(real_t));
-    S->sd  = calloc(S->n, sizeof(real_t));
-    S->rid = calloc(S->n, sizeof(real_t));
-    S->rsd = calloc(S->n, sizeof(real_t));
-
+    S->diag = calloc(S->n, sizeof(diag_t));
+    
     S->b = calloc(S->n, sizeof(real_t));
 
     real_t *x = calloc(S->n, sizeof(real_t));
@@ -43,11 +39,7 @@ int main(int argc, char *const argv[]) {
  
 
     /* Free */
-    free(S->rid);
-    free(S->id);
-    free(S->md);
-    free(S->sd);
-    free(S->rsd);
+    free(S->diag);
     free(S->b);
     free(S);
     free(x);

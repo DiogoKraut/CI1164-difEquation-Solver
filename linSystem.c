@@ -32,18 +32,18 @@
   	LIKWID_MARKER_START("GS");
         part_norm = 0.0;
         /* First iteration */
-        res  = ((S->sd[0] * x[1]) + (S->rsd[0] * x[nx]));
-        x[0] = (S->b[0] - res) / S->md[0];
-        res += S->md[0] * x[0];
+        res  = ((S->diag[0].sd * x[1]) + (S->diag[0].rsd * x[nx]));
+        x[0] = (S->b[0] - res) / S->diag[0].md;
+        res += S->diag[0].md * x[0];
         // printf(" 0 %.3lf", res);
         res  = S->b[0] - res;
         part_norm += res*res;
 
         /* Next nx iteration */
         for(i = 1; i < nx; i++) {
-        	res  = ((S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]));
-            x[i] = (S->b[i] - res) / S->md[i];
-            res += S->md[i] * x[i];
+        	res  = ((S->diag[i].id * x[i-1]) + (S->diag[i].sd * x[i+1]) + (S->diag[i].rsd * x[i+nx]));
+            x[i] = (S->b[i] - res) / S->diag[i].md;
+            res += S->diag[i].md * x[i];
             // printf(" %d %.3lf",i, res);
             res  = S->b[i] - res;
             part_norm += res*res;
@@ -51,9 +51,9 @@
 
         /* From nx to S->n - nx */
         for(i = nx; i < S->n - nx-1; i++) {
-        	res  = ((S->rid[i] * x[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]));
-            x[i] = (S->b[i] - res) / S->md[i];
-            res += S->md[i] * x[i];
+        	res  = ((S->diag[i].rid * x[i-nx]) + (S->diag[i].id * x[i-1]) + (S->diag[i].sd * x[i+1]) + (S->diag[i].rsd * x[i+nx]));
+            x[i] = (S->b[i] - res) / S->diag[i].md;
+            res += S->diag[i].md * x[i];
             // printf(" %d %.3lf",i, res);
             res  = S->b[i] - res;
             part_norm += res*res;
@@ -61,18 +61,18 @@
 
         /* From S->n - nx to S->n */
         for(i = S->n - nx-1; i < S->n-1; i++) {
-        	res = ((S->rid[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]));
-            x[i] = (S->b[i] - res) / S->md[i];
-            res += S->md[i] * x[i];
+        	res = ((S->diag[i-nx].rid) + (S->diag[i].id * x[i-1]) + (S->diag[i].sd * x[i+1]));
+            x[i] = (S->b[i] - res) / S->diag[i].md;
+            res += S->diag[i].md * x[i];
             // printf(" %d %.3lf",i, res);
             res  = S->b[i] - res;
             part_norm += res*res;
         }
 
         /* Last iteration */
-        res = ((S->rid[S->n-1] * x[S->n - nx-1]) + (S->id[S->n-1] * x[S->n-1]));
-        x[S->n] = (S->b[S->n-1] - res) / S->md[S->n-1];
-        res += S->md[S->n-1] * x[S->n-1];
+        res = ((S->diag[S->n-1].rid * x[S->n - nx-1]) + (S->diag[S->n-1].id * x[S->n-1]));
+        x[S->n] = (S->b[S->n-1] - res) / S->diag[S->n-1].md;
+        res += S->diag[S->n-1].md * x[S->n-1];
         // printf(" l %.3lf", res);
         res  = S->b[S->n-1] - res;
         part_norm += res*res;
