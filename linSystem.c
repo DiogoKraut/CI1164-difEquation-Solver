@@ -27,8 +27,7 @@
     *avg_time = 0.0;
 
     for (k = 0; k < MAXIT; k++) {
-  	LIKWID_MARKER_START("GS");
-    for (k = 0; k < MAXIT; k++) {
+      	LIKWID_MARKER_START("GS");
         t1 = timestamp();
         for(i = 0; i < S->n; i++) {
             sum = 0.0;
