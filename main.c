@@ -40,7 +40,7 @@ int main(int argc, char *const argv[]) {
     //     printf("%lf ", x[i]);
     // }
     // gnuplot(x, opt.NX, opt.NY, avg_time, norm, fp);
- 
+    fclose(fp);
 
     /* Free */
     free(S->rid);

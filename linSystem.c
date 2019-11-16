@@ -71,7 +71,7 @@
 
         /* Last iteration */
         res = ((S->rid[S->n-1] * x[S->n - nx-1]) + (S->id[S->n-1] * x[S->n-1]));
-        x[S->n] = (S->b[S->n-1] - res) / S->md[S->n-1];
+        x[S->n-1] = (S->b[S->n-1] - res) / S->md[S->n-1];
         res += S->md[S->n-1] * x[S->n-1];
         // printf(" l %.3lf", res);
         res  = S->b[S->n-1] - res;
