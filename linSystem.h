@@ -20,5 +20,5 @@ typedef struct {
 } linSystem_t;
 
 int gaussSeidel(linSystem_t *S, int nx, real_t *x, double *avg_time, real_t *norm);
-real_t normL2(linSystem_t *S, real_t *x);
+real_t normL2(linSystem_t *S, real_t *x, int nx);
 #endif
