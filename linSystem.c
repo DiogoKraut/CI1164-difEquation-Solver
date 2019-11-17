@@ -65,6 +65,7 @@
     }
     *avg_time = *avg_time / MAXIT;
   	LIKWID_MARKER_CLOSE;
+    free(res);
     return 0;
   }
 
@@ -76,37 +77,36 @@
 
 real_t normL2(linSystem_t *S, real_t *x, int nx) {
     int i, j;
-    real_t part_norm, res;
+    real_t part_norm, *res = malloc(sizeof(real_t) * S->n);
     part_norm = 0.0;
+
     /* First iteration */
-    res  = ((S->sd[0] * x[1]) + (S->rsd[0] * x[nx]) + (S->md[0] * x[0]));
-    res  = S->b[0] - res;
-    part_norm += res*res;
+    res[0] = ((S->sd[0] * x[1]) + (S->rsd[0] * x[nx]) + (S->md[0] * x[0]));
 
     /* Next nx iteration */
     for(i = 1; i < nx; i++) {
-        res  = ((S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]) + (S->md[i] * x[i]));
-        res  = S->b[i] - res;
-        part_norm += res*res;
+        res[i] = ((S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]) + (S->md[i] * x[i]));
     }
 
     /* From nx to S->n - nx */
     for(i = nx; i < S->n - nx-1; i++) {
-        res  = ((S->rid[i] * x[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]) + (S->md[i] * x[i]));
-        res  = S->b[i] - res;
-        part_norm += res*res;
+        res[i] = ((S->rid[i] * x[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]) + (S->md[i] * x[i]));
     }
 
     /* From S->n - nx to S->n */
     for(i = S->n - nx-1; i < S->n-1; i++) {
-        res = ((S->rid[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->md[i] * x[i]));
-        res  = S->b[i] - res;
-        part_norm += res*res;
+        res[i] = ((S->rid[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->md[i] * x[i]));
     }
 
     /* Last iteration */
-    res = ((S->rid[S->n-1] * x[S->n - nx-1]) + (S->id[S->n-1] * x[S->n-1]) + (S->md[S->n-1] * x[S->n-1]));
-    res  = S->b[S->n-1] - res;
-    part_norm += res*res;
+    res[S->n-1] = ((S->rid[S->n-1] * x[S->n - nx-1]) + (S->id[S->n-1] * x[S->n-1]) + (S->md[S->n-1] * x[S->n-1]));
+
+    for(i = 0; i < S->n; i++) {
+        res[i] = S->b[i] - res[i];
+        res[i] = res[i]*res[i];
+    }
+    for(i = 0; i < S->n; i++) {
+        part_norm += res[i];
+    }
     return (real_t)sqrt(part_norm);         // returns norm of residue array
 }
