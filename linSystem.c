@@ -39,9 +39,11 @@
             x[i] /= S->A[i][i];
         }
 
+    	LIKWID_MARKER_STOP("GS");
         *avg_time += timestamp() - t1;
+        LIKWID_MARKER_START("Norm");
         norm[k] = normL2(S, x);
-	LIKWID_MARKER_STOP("GS");
+        LIKWID_MARKER_STOP("Norm");
     }
     *avg_time = *avg_time / MAXIT;
 
