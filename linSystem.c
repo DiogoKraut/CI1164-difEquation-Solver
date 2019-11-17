@@ -57,7 +57,7 @@
         }
 	LIKWID_MARKER_STOP("GS");
     LIKWID_MARKER_START("Norm");
-        norm[k] = normL2(S, x, nx);
+        norm[k] = normL2(S, x, res, nx);
     LIKWID_MARKER_STOP("Norm");
 
         *avg_time += timestamp() - t1;
@@ -73,9 +73,9 @@
       \param x solution array
   */
 
-real_t normL2(linSystem_t *S, real_t *x, int nx) {
+real_t normL2(linSystem_t *S, real_t *x, real_t *res, int nx) {
     int i, j;
-    real_t part_norm, *res = malloc(sizeof(real_t) * S->n);
+    real_t part_norm;
     part_norm = 0.0;
 
     /* First iteration */
