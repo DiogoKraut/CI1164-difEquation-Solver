@@ -20,7 +20,6 @@
     \param[out] norm array conatining the norm for each iteration
   */
   int gaussSeidel(linSystem_t *S, int nx, real_t *x, double *avg_time, real_t *norm) {
-  	LIKWID_MARKER_INIT;
     real_t *res = malloc(sizeof(real_t) * S->n);
     int k, i;
     double t1;
@@ -64,7 +63,6 @@
         *avg_time += timestamp() - t1;
     }
     *avg_time = *avg_time / MAXIT;
-  	LIKWID_MARKER_CLOSE;
     free(res);
     return 0;
   }
