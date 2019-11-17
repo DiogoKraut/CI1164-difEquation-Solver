@@ -21,96 +21,101 @@
   */
   int gaussSeidel(linSystem_t *S, int nx, real_t *x, double *avg_time, real_t *norm) {
   	LIKWID_MARKER_INIT;
-    real_t res, part_norm;
-    int k, i;
+    real_t res;
+    int k, i, n = S->n;
     double t1;
 
     *avg_time = 0.0;
 
     for (k = 0; k < MAXIT; k++) {
         t1 = timestamp();
-  	LIKWID_MARKER_START("GS");
-        part_norm = 0.0;
+      	LIKWID_MARKER_START("GS");
         /* First iteration */
         res  = ((S->diag[0].sd * x[1]) + (S->diag[0].rsd * x[nx]));
         x[0] = (S->b[0] - res) / S->diag[0].md;
-        res += S->diag[0].md * x[0];
-        // printf(" 0 %.3lf", res);
-        res  = S->b[0] - res;
-        part_norm += res*res;
 
         /* Next nx iteration */
         for(i = 1; i < nx; i++) {
         	res  = ((S->diag[i].id * x[i-1]) + (S->diag[i].sd * x[i+1]) + (S->diag[i].rsd * x[i+nx]));
             x[i] = (S->b[i] - res) / S->diag[i].md;
-            res += S->diag[i].md * x[i];
-            // printf(" %d %.3lf",i, res);
-            res  = S->b[i] - res;
-            part_norm += res*res;
         }
 
-        /* From nx to S->n - nx */
-        for(i = nx; i < S->n - nx-1; i++) {
+        /* From nx to n - nx */
+        for(i = nx; i < n - nx-1; i++) {
         	res  = ((S->diag[i].rid * x[i-nx]) + (S->diag[i].id * x[i-1]) + (S->diag[i].sd * x[i+1]) + (S->diag[i].rsd * x[i+nx]));
             x[i] = (S->b[i] - res) / S->diag[i].md;
-            res += S->diag[i].md * x[i];
-            // printf(" %d %.3lf",i, res);
-            res  = S->b[i] - res;
-            part_norm += res*res;
         }
 
-        /* From S->n - nx to S->n */
-        for(i = S->n - nx-1; i < S->n-1; i++) {
+        /* From n - nx to n */
+        for(i = n - nx-1; i < n-1; i++) {
         	res = ((S->diag[i-nx].rid) + (S->diag[i].id * x[i-1]) + (S->diag[i].sd * x[i+1]));
             x[i] = (S->b[i] - res) / S->diag[i].md;
-            res += S->diag[i].md * x[i];
-            // printf(" %d %.3lf",i, res);
-            res  = S->b[i] - res;
-            part_norm += res*res;
         }
 
         /* Last iteration */
-        res = ((S->diag[S->n-1].rid * x[S->n - nx-1]) + (S->diag[S->n-1].id * x[S->n-1]));
-        x[S->n-1] = (S->b[S->n-1] - res) / S->diag[S->n-1].md;
-        res += S->diag[S->n-1].md * x[S->n-1];
-        // printf(" l %.3lf", res);
-        res  = S->b[S->n-1] - res;
-        part_norm += res*res;
+        res = ((S->diag[n-1].rid * x[n - nx-1]) + (S->diag[n-1].id * x[n-1]));
+        x[n-1] = (S->b[n-1] - res) / S->diag[n-1].md;
 
-        // for(i = 0; i < S->n; i++)
-        //     printf("%.3lf ", x[i]);
-        // printf("%lf ", part_norm);
-        // printf("\n");
-
-        norm[k] = sqrt(part_norm);
+    	LIKWID_MARKER_STOP("GS");
+        norm[k] = normL2(S, x, nx);
         *avg_time += timestamp() - t1;
-	LIKWID_MARKER_STOP("GS");
     }
     *avg_time = *avg_time / MAXIT;
   	LIKWID_MARKER_CLOSE;
     return 0;
   }
 
-  // /*!
-  //     \brief Calculates the norm of the array r = S->b - S->A*x
-  //     \param S structure that stores a linear system of equations
-  //     \param x solution array
-  // */
+/*!
+  \brief Calculates the norm of the array r = S->b - S->A*x
+  \param S structure that stores a linear system of equations
+  \param x solution array
+*/
 
-  // real_t normL2(linSystem_t *S, real_t *x) {
-  //     int i, j;
-  //     real_t norm, res;
-  //     norm = 0.0;
-  //     // Calculate residue array
-  //     for(i = 0; i < S->n; i++) {
-  //         res = 0.0;
-  //         for(j = 0; j < S->n; j++) {     // ith line of matrix A times x
-  //             res += (S->A[i][j] * x[j]);
-  //         }
+real_t normL2(linSystem_t *S, real_t *x, int nx) {
+    int i, n = S->n;
+    real_t part_norm, res;
+    // Calculate residue array
+    LIKWID_MARKER_START("Norm");
+    part_norm = 0.0;
+    /* First iteration */
+    res = ((S->diag[0].sd * x[1]) + (S->diag[0].rsd * x[nx]) + (S->diag[0].md * x[0]));
+    // printf(" 0 %.3lf", res);
+    res = S->b[0] - res;
+    part_norm += res*res;
 
-  //         res = S->b[i] - res;            // partial residue
-  //         norm += res*res;                // sum of all partial residues
+    /* Next nx iteration */
+    for(i = 1; i < nx; i++) {
+        res = ((S->diag[i].id * x[i-1]) + (S->diag[i].sd * x[i+1]) + (S->diag[i].rsd * x[i+nx]) + (S->diag[i].md * x[i]));
+        // printf(" %d %.3lf",i, res);
+        res = S->b[i] - res;
+        part_norm += res*res;
+    }
 
-  //     }
-  //     return (real_t)sqrt(norm);         // returns norm of residue array
-  // }
+    /* From nx to n - nx */
+    for(i = nx; i < n - nx-1; i++) {
+        res = ((S->diag[i].rid * x[i-nx]) + (S->diag[i].id * x[i-1]) + (S->diag[i].sd * x[i+1]) + (S->diag[i].rsd * x[i+nx]) + (S->diag[i].md * x[i]));
+        // printf(" %d %.3lf",i, res);
+        res = S->b[i] - res;
+        part_norm += res*res;
+    }
+
+    /* From n - nx to n */
+    for(i = n - nx-1; i < n-1; i++) {
+        res  = S->diag[i].rid * x[i-nx];
+        res += S->diag[i].id  * x[i-1];
+        res += S->diag[i].sd  * x[i+1];
+        res += S->diag[i].md  * x[i];
+        // printf(" %d %.3lf",i, res);
+        res = S->b[i] - res;
+        part_norm += res*res;
+    }
+
+    /* Last iteration */
+    res = ((S->diag[n-1].rid * x[n - nx-1]) + (S->diag[n-1].id * x[n-2]) + (S->diag[n-1].md * x[n-1]));
+    // printf(" l %.3lf", res);
+    res = S->b[n-1] - res;
+    part_norm += res*res;
+
+    LIKWID_MARKER_STOP("Norm");
+    return (real_t)sqrt(part_norm);         // returns partial norm
+}
