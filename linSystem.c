@@ -32,29 +32,35 @@
 
         /* First iteration */
         res[0] = ((S->sd[0] * x[1]) + (S->rsd[0] * x[nx]));
+        res[0] = S->b[0] - res[0];
+        x[0]   = res[0]  / S->md[0];
 
         /* Next nx iteration */
         for(i = 1; i < nx; i++) {
         	res[i] = ((S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]));
+            res[i] = S->b[i] - res[i];
+            x[i] = res[i] / S->md[i];
         }
 
         /* From nx to S->n - nx */
         for(i = nx; i < S->n - nx-1; i++) {
         	res[i] = ((S->rid[i] * x[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]));
+            res[i] = S->b[i] - res[i];
+            x[i] = res[i] / S->md[i];
         }
 
         /* From S->n - nx to S->n */
         for(i = S->n - nx-1; i < S->n-1; i++) {
-        	res[i] = ((S->rid[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]));
+        	res[i] = ((S->rid[i]  * x[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]));
+            res[i] = S->b[i] - res[i];
+            x[i] = res[i] / S->md[i];
         }
 
         /* Last iteration */
         res[S->n-1] = ((S->rid[S->n-1] * x[S->n - nx-1]) + (S->id[S->n-1] * x[S->n-1]));
+        res[S->n-1] = S->b[S->n-1] - res[S->n-1];
+        x[S->n-1] = res[S->n-1] / S->md[S->n-1];
 
-        for(i = 0; i < S->n; i++) {
-            res[i] = S->b[i] - res[i];
-            x[i] = res[i] / S->md[i];
-        }
 	LIKWID_MARKER_STOP("GS");
     LIKWID_MARKER_START("Norm");
         norm[k] = normL2(S, x, res, nx);
@@ -74,7 +80,7 @@
   */
 
 real_t normL2(linSystem_t *S, real_t *x, real_t *res, int nx) {
-    int i, j;
+    int i;
     real_t part_norm;
     part_norm = 0.0;
 
@@ -82,18 +88,23 @@ real_t normL2(linSystem_t *S, real_t *x, real_t *res, int nx) {
     res[0] = ((S->sd[0] * x[1]) + (S->rsd[0] * x[nx]) + (S->md[0] * x[0]));
 
     /* Next nx iteration */
-    for(i = 1; i < nx; i++) {
+    for(i = 1; i < nx; i+=2) {
         res[i] = ((S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]) + (S->md[i] * x[i]));
+        res[i+1] = ((S->id[i+1] * x[i+1-1]) + (S->sd[i+1] * x[i+1+1]) + (S->rsd[i+1] * x[i+1+nx]) + (S->md[i+1] * x[i+1]));
+
     }
 
     /* From nx to S->n - nx */
-    for(i = nx; i < S->n - nx-1; i++) {
+    for(i = nx; i < S->n - nx-1; i+=2) {
         res[i] = ((S->rid[i] * x[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->rsd[i] * x[i+nx]) + (S->md[i] * x[i]));
+        res[i+1] = ((S->rid[i+1] * x[i+1-nx]) + (S->id[i+1] * x[i+1-1]) + (S->sd[i+1] * x[i+1+1]) + (S->rsd[i+1] * x[i+1+nx]) + (S->md[i+1] * x[i+1]));
+
     }
 
     /* From S->n - nx to S->n */
-    for(i = S->n - nx-1; i < S->n-1; i++) {
+    for(i = S->n - nx-1; i < S->n-1; i+=2) {
         res[i] = ((S->rid[i-nx]) + (S->id[i] * x[i-1]) + (S->sd[i] * x[i+1]) + (S->md[i] * x[i]));
+        res[i+1] = ((S->rid[i+1-nx]) + (S->id[i+1] * x[i+1-1]) + (S->sd[i+1] * x[i+1+1]) + (S->md[i+1] * x[i+1]));
     }
 
     /* Last iteration */

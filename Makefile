@@ -1,7 +1,7 @@
 TARGET = pdeSolver
 LIBS = -lm -llikwid
 CC = gcc
-CFLAGS = -Wall -O3 -D LIKWID_PERFMON -I /home/soft/likwid/include -L /home/soft/likwid/lib -mavx -march=native 
+CFLAGS = -Wall -O3 -fopt-info-vec-optimized -D LIKWID_PERFMON -I /home/soft/likwid/include -L /home/soft/likwid/lib -mavx -march=native 
 
 .PHONY: default all clean
 

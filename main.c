@@ -17,7 +17,9 @@ int main(int argc, char *const argv[]) {
     /* Memory allocation */
     linSystem_t *S = malloc(sizeof(linSystem_t));
     S->n = opt.NX*opt.NY;
-
+    // int n = (int)S->n / 16;
+    // if(n % 2 == 0)
+    //     n++;
     S->md  = calloc(S->n, sizeof(real_t));
     S->id  = calloc(S->n, sizeof(real_t));
     S->sd  = calloc(S->n, sizeof(real_t));
